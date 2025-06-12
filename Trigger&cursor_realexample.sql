@@ -57,3 +57,37 @@ END;
 UPDATE students SET course = 'MBA' WHERE student_id = 1;
 DELETE FROM students WHERE student_id = 1;
 SELECT * FROM student_log ORDER BY log_id;
+
+
+
+--cursor
+SET SERVEROUTPUT ON;
+
+DECLARE
+    -- Declare the cursor to fetch students in BBA
+    CURSOR bba_students_cursor IS
+        SELECT student_id, name, admission_date
+        FROM students
+        WHERE course = 'BBA';
+
+    -- Variables to hold data from cursor
+    v_id students.student_id%TYPE;
+    v_name students.name%TYPE;
+    v_date students.admission_date%TYPE;
+
+BEGIN
+    OPEN bba_students_cursor;
+
+    LOOP
+        FETCH bba_students_cursor INTO v_id, v_name, v_date;
+        EXIT WHEN bba_students_cursor%NOTFOUND;
+
+        -- Display student info
+        DBMS_OUTPUT.PUT_LINE(
+            'ID: ' || v_id || ', Name: ' || v_name || ', Admission: ' || TO_CHAR(v_date, 'DD-MON-YYYY')
+        );
+    END LOOP;
+
+    CLOSE bba_students_cursor;
+END;
+/
